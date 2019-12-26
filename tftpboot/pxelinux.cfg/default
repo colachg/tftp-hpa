@@ -1,0 +1,11 @@
+default menu.c32
+prompt 0
+menu title Boot Menu
+  label localboot
+    menu label Boot Local Disk
+    localboot 0
+
+  label bionicmanual
+    menu label Manual Install Ubuntu 18.04 Server
+    kernel bionic/linux
+    append initrd=bionic/initrd.gz vga=788 locale=en_GB.UTF-8 keyboard-configuration/layoutcode=gb hostname=ubuntu

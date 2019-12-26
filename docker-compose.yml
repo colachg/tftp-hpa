@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  tftpd-hpa:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: colachen/tftpd-hpa
+    container_name: tftpd
+    restart: always
+    ports:
+      - "69:69/udp"
+      - "80:80"
+    volumes:
+      - ${PWD}/tftpboot:/tftpboot
+      - ${PWD}/nginx/conf.d:/etc/nginx/conf.d
+      - ${PWD}/os:/opt/os
