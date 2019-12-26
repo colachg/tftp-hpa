@@ -12,16 +12,19 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Define variables
+        run: |
+          echo "colachen" > REPOSITORY
+          echo "tftp-hpa" > IMAGE_NAME
+
       - name: build docker image
         run: |
-          docker build . -t $REPOSITORY/$IMAGE_NAME:v`date +%Y%m%d` -t $REPOSITORY/$IMAGE_NAME:latest
+          docker build . -t $(cat REPOSITORY)/$(cat IMAGE_NAME):v`date +%Y%m%d` -t $(cat REPOSITORY)/$(cat IMAGE_NAME):latest
       - name: push image to dockerhub
         run: |
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push $REPOSITORY/$IMAGE_NAME:v`date +%Y%m%d`
-          docker push $REPOSITORY/$IMAGE_NAME:latest
+          docker push $(cat REPOSITORY)/$(cat IMAGE_NAME):v`date +%Y%m%d`
+          docker push $(cat REPOSITORY)/$(cat IMAGE_NAME):latest
         env:
-          REPOSITORY: colachen
-          IMAGE_NAME: tftp-hpa
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
