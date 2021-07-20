@@ -1,4 +1,5 @@
 # tftp-hpa
+[![build-image](https://github.com/colachg/tftp-hpa/actions/workflows/build-image.yml/badge.svg)](https://github.com/colachg/tftp-hpa/actions/workflows/build-image.yml)
 
 PXELinux is a network boot server and can be used as a replacement to boot CDs or USB. Devices boot from the network and the PXELinux server provides the bootstrap files. Often this is used to deploy new installations of Linux when a system boots.
 
