@@ -8,7 +8,12 @@ on:
   schedule:
     - cron:  '0 0 1 * *'
 
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Manually trigger'
+        required: true
+        default: 'Mona the Octocat'
 
 jobs:
   build:
