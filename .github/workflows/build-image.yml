@@ -5,26 +5,38 @@ on:
     branches:
       - master
 
+  schedule:
+    - cron:  '0 0 1 * *'
+
+  workflow_dispatch
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Define variables
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Prepare
+        id: prepare
         run: |
-          echo "colachen" > REPOSITORY
-          echo "tftp-hpa" > IMAGE_NAME
-
-      - name: build docker image
-        run: |
-          docker build . -t $(cat REPOSITORY)/$(cat IMAGE_NAME):v`date +%Y%m%d` -t $(cat REPOSITORY)/$(cat IMAGE_NAME):latest
-      - name: push image to dockerhub
-        run: |
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push $(cat REPOSITORY)/$(cat IMAGE_NAME):v`date +%Y%m%d`
-          docker push $(cat REPOSITORY)/$(cat IMAGE_NAME):latest
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          echo ::set-output name=build_date::v$(date -u +'%Y%m%d')
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            colachen/tftp-hpa:latest
+            colachen/tftp-hpa:${{ steps.prepare.outputs.build_date }}
+            colachen/tftp-hpa:v1.0.0
